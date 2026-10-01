@@ -7,10 +7,16 @@ authors = [
     { name = "xiaomao", email = "ychenliao@163.com" }
 ]
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "fastapi>=0.142.2",
+]
 
 [project.scripts]
 headline-backend = "headline_backend:main"
+
+[[tool.uv.index]]
+url = "https://uv.agentsmirror.com/pypi/simple"
+default = true
 
 [build-system]
 requires = ["uv_build>=0.12.10,<0.13.0"]
