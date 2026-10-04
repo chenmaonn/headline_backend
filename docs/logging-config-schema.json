@@ -1,0 +1,272 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Python Logging dictConfig Schema",
+  "description": "Schema for Python logging.config.dictConfig YAML configuration",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "description": "配置版本号，目前固定为 1",
+      "const": 1
+    },
+    "disable_existing_loggers": {
+      "type": "boolean",
+      "description": "True=禁用已有Logger，False=保留（生产环境推荐 False）",
+      "default": false
+    },
+    "incremental": {
+      "type": "boolean",
+      "description": "True=增量修改现有配置（仅修改指定项），默认 False",
+      "default": false
+    },
+
+    "formatters": {
+      "type": "object",
+      "description": "格式器配置，键为格式器名称（自定义）",
+      "patternProperties": {
+        "^[a-zA-Z_][a-zA-Z0-9_]*$": {
+          "type": "object",
+          "description": "格式器配置。通常只需指定 format 和 datefmt",
+          "properties": {
+            "format": {
+              "type": "string",
+              "description": "日志输出格式字符串",
+              "default": "%(message)s"
+            },
+            "datefmt": {
+              "type": "string",
+              "description": "时间格式（遵循 time.strftime）",
+              "examples": ["%Y-%m-%d %H:%M:%S"]
+            },
+            "class": {
+              "type": "string",
+              "description": "自定义 Formatter 类的完整路径（仅当需要自定义格式化逻辑时使用，一般不需要）",
+              "examples": ["myapp.MyFormatter"]
+            },
+            "validate": {
+              "type": "boolean",
+              "description": "是否验证格式字符串有效性，默认 True",
+              "default": true
+            }
+          }
+        }
+      }
+    },
+
+    "filters": {
+      "type": "object",
+      "description": "过滤器配置，键为过滤器名称（自定义）",
+      "patternProperties": {
+        "^[a-zA-Z_][a-zA-Z0-9_]*$": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "过滤器名称（用于日志记录）"
+            },
+            "class": {
+              "type": "string",
+              "description": "Filter 类的完整路径",
+              "default": "logging.Filter",
+              "examples": ["logging.Filter", "myapp.MyFilter"]
+            }
+          }
+        }
+      }
+    },
+
+    "handlers": {
+      "type": "object",
+      "description": "处理器配置，键为处理器名称（自定义）",
+      "patternProperties": {
+        "^[a-zA-Z_][a-zA-Z0-9_]*$": {
+          "type": "object",
+          "properties": {
+            "class": {
+              "type": "string",
+              "description": "Handler 类的完整路径（必填）",
+              "enum": [
+                "logging.StreamHandler",
+                "logging.FileHandler",
+                "logging.handlers.RotatingFileHandler",
+                "logging.handlers.TimedRotatingFileHandler",
+                "logging.handlers.SMTPHandler",
+                "logging.handlers.HTTPHandler",
+                "logging.handlers.SysLogHandler",
+                "logging.handlers.SocketHandler",
+                "logging.handlers.DatagramHandler",
+                "logging.handlers.MemoryHandler",
+                "logging.NullHandler",
+                "logging.handlers.QueueHandler"
+              ]
+            },
+            "level": {
+              "type": "string",
+              "description": "处理器级别",
+              "enum": ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL", "NOTSET"]
+            },
+            "formatter": {
+              "type": "string",
+              "description": "引用 formatters 中定义的名称"
+            },
+            "filters": {
+              "type": "array",
+              "description": "引用 filters 中定义的名称列表",
+              "items": {
+                "type": "string"
+              }
+            },
+
+            "stream": {
+              "type": "string",
+              "description": "输出流（StreamHandler 专用）",
+              "pattern": "^ext://",
+              "examples": ["ext://sys.stdout", "ext://sys.stderr"]
+            },
+
+            "filename": {
+              "type": "string",
+              "description": "日志文件路径（FileHandler 专用）",
+              "examples": ["logs/app.log", "/var/log/myapp/app.log"]
+            },
+            "mode": {
+              "type": "string",
+              "description": "文件打开模式，默认 'a'",
+              "enum": ["a", "w"],
+              "default": "a"
+            },
+            "encoding": {
+              "type": "string",
+              "description": "文件编码",
+              "examples": ["utf-8", "gbk"]
+            },
+            "delay": {
+              "type": "boolean",
+              "description": "是否延迟创建文件（首次写入时创建），默认 False",
+              "default": false
+            },
+
+            "maxBytes": {
+              "type": "integer",
+              "description": "单个日志文件最大字节数（RotatingFileHandler）",
+              "examples": [10485760, 52428800]
+            },
+            "backupCount": {
+              "type": "integer",
+              "description": "保留的备份文件数量",
+              "examples": [5, 10]
+            },
+
+            "when": {
+              "type": "string",
+              "description": "轮转时间单位（TimedRotatingFileHandler）：S/M/H/D/W0-W6/midnight",
+              "enum": ["S", "M", "H", "D", "W0", "W1", "W2", "W3", "W4", "W5", "W6", "midnight"]
+            },
+            "interval": {
+              "type": "integer",
+              "description": "轮转间隔，默认 1",
+              "default": 1
+            },
+            "utc": {
+              "type": "boolean",
+              "description": "是否使用 UTC 时间，默认 False",
+              "default": false
+            },
+
+            "mailhost": {
+              "type": "string",
+              "description": "SMTP 服务器地址（SMTPHandler）",
+              "examples": ["smtp.gmail.com"]
+            },
+            "fromaddr": {
+              "type": "string",
+              "description": "发件人邮箱（SMTPHandler）",
+              "examples": ["logs@myapp.com"]
+            },
+            "toaddrs": {
+              "type": "array",
+              "description": "收件人邮箱列表（SMTPHandler）",
+              "items": {
+                "type": "string"
+              },
+              "examples": [["admin@myapp.com"]]
+            },
+            "subject": {
+              "type": "string",
+              "description": "邮件主题（SMTPHandler）",
+              "examples": ["Application Error"]
+            }
+          },
+          "required": ["class"]
+        }
+      }
+    },
+
+    "loggers": {
+      "type": "object",
+      "description": "日志记录器配置，键为 Logger 名称（自定义）",
+      "patternProperties": {
+        "^[a-zA-Z_][a-zA-Z0-9_.]*$": {
+          "type": "object",
+          "properties": {
+            "level": {
+              "type": "string",
+              "description": "Logger 级别",
+              "enum": ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL", "NOTSET"]
+            },
+            "handlers": {
+              "type": "array",
+              "description": "引用 handlers 中定义的名称列表",
+              "items": {
+                "type": "string"
+              }
+            },
+            "filters": {
+              "type": "array",
+              "description": "引用 filters 中定义的名称列表",
+              "items": {
+                "type": "string"
+              }
+            },
+            "propagate": {
+              "type": "boolean",
+              "description": "是否将日志传播给父 Logger，默认 True",
+              "default": true
+            },
+            "qualname": {
+              "type": "string",
+              "description": "Logger 的限定名称（一般与键名相同）"
+            }
+          }
+        }
+      }
+    },
+
+    "root": {
+      "type": "object",
+      "description": "根 Logger 配置",
+      "properties": {
+        "level": {
+          "type": "string",
+          "description": "根 Logger 级别",
+          "enum": ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL", "NOTSET"]
+        },
+        "handlers": {
+          "type": "array",
+          "description": "引用 handlers 中定义的名称列表",
+          "items": {
+            "type": "string"
+          }
+        },
+        "filters": {
+          "type": "array",
+          "description": "引用 filters 中定义的名称列表",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "required": ["version"]
+}

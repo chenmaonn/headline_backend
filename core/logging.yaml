@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../docs/logging-config-schema.json
+version: 1
+disable_existing_loggers: false
+
+formatters:
+  default:
+    "()": core.logging_context.RequestIdFormatter
+    format: "%(asctime)s - %(name)s%(request_id)s- %(levelname)s: %(message)s"
+    datefmt: "%Y-%m-%d %H:%M:%S"
+
+filters:
+  request_id:
+    "()": core.logging_context.RequestIdFilter
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    formatter: default
+    filters:
+      - request_id
+    #下方参数可能会在logging_config中覆盖
+    level: INFO
+    stream: ext://sys.stdout
+
+  file:
+    class: logging.handlers.TimedRotatingFileHandler
+    formatter: default
+    filters:
+      - request_id
+
+    #下方参数可能会在logging_config中覆盖
+    level: DEBUG
+    encoding: utf-8
+    filename: ./logs/Log.log
+    when: midnight
+    interval: 1
+
+loggers:
+  core.logging_config:
+    level: DEBUG
+    handlers:
+      - console
+      - file
+    propagate: false
+  main:
+    level: DEBUG
+    handlers:
+      - console
+      - file
