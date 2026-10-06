@@ -8,6 +8,7 @@ authors = [
 ]
 requires-python = ">=3.14"
 dependencies = [
+    "alembic>=1.20.0",
     "fastapi>=0.142.2",
     "pydantic-settings>=2.15.0",
     "pyyaml>=6.0.3",
@@ -17,6 +18,9 @@ dependencies = [
 [project.scripts]
 headline-backend = "headline_backend:main"
 
+[tool.hatch.build.targets.wheel]
+packages = ["src/headline_backend"]
+
 [[tool.uv.index]]
 url = "https://uv.agentsmirror.com/pypi/simple"
 default = true
@@ -24,3 +28,14 @@ default = true
 [build-system]
 requires = ["uv_build>=0.12.10,<0.13.0"]
 build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

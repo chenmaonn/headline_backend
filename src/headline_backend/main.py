@@ -1,10 +1,12 @@
+"""程序入口"""
+
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from logging import getLogger
 
 from fastapi import FastAPI
 
-from core.logging_config import logging_init
+from src.headline_backend.core.logging.logging_config import logging_init
 
 logger = getLogger(__name__)
 
