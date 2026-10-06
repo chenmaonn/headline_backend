@@ -11,7 +11,7 @@
             "request": "launch",
             "module": "uvicorn",
             "args": [
-                "main:app",
+                "src.headline_backend.main:app",
                 "--reload"
             ]
         }

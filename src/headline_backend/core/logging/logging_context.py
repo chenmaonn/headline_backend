@@ -1,3 +1,5 @@
+"""logging上下文,用于request_id注入"""
+
 import logging
 from contextvars import ContextVar
 
