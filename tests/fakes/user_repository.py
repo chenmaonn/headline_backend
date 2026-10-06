@@ -6,4 +6,4 @@ class InMemoryUserRepository:
         """初始化虚拟用户表"""
         self._users = []
 
-    def create(self, name: str, email: str)
+    # def create(self, name: str, email: str)
