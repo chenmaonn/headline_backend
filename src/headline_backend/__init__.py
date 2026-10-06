@@ -1,2 +1,1 @@
-def main() -> None:
-    print("Hello from headline-backend!")
+"""此为headline_backend的源代码"""

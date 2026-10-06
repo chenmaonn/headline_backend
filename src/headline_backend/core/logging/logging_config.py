@@ -1,3 +1,5 @@
+"""logging核心配置"""
+
 import logging
 import logging.config
 import sys
@@ -8,7 +10,7 @@ from pathlib import Path
 
 from yaml import safe_load
 
-from core.config import settings
+from src.headline_backend.core.config import settings
 
 logger = getLogger(__name__)
 
